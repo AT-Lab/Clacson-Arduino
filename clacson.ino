@@ -1,6 +1,15 @@
 #include "pitches.h"
 #include "melody.h"
 
+// Usicte display 7 segmenti
+#define a     9
+#define b     10
+#define c     1
+#define d     2
+#define e     3
+#define f     7
+#define g     8
+
 // I/O pinout
 #define SWDX  5 // switch destro (selezione canzone)
 #define SWSX  6 // switch sinistro (incrementa numero canzone)
@@ -38,20 +47,20 @@ byte seven_seg_digits[16][7] = { { 1, 1, 1, 1, 1, 1, 0 }, // = 0
                                  { 1, 0, 0, 0, 1, 1, 1 }};// = F
 
 void setup() {
-  pinMode(GATE, OUTPUT);
-  digitalWrite(GATE, LOW);
-  pinMode(SWDX, INPUT);
-  pinMode(SWSX, INPUT);
-  for(int j=0; j<(sizeof(sevSeg)/sizeof(sevSeg[0])); j++) pinMode(sevSeg[j], OUTPUT);
+    pinMode(GATE, OUTPUT);
+    digitalWrite(GATE, LOW);
+    pinMode(SWDX, INPUT);
+    pinMode(SWSX, INPUT);
+    for(int j=0; j<(sizeof(sevSeg)/sizeof(sevSeg[0])); j++) pinMode(sevSeg[j], OUTPUT);
 
-  // Serpentina iniziale
-  int snake[] = {a, b, g, e, d, c, g, f, a, b, g, e, d, c, g, f, a, b, g, e, d, c, g, f, a, b, g, e, d, c, g, f};
+    // Serpentina iniziale
+    int snake[] = {a, b, g, e, d, c, g, f, a, b, g, e, d, c, g, f, a, b, g, e, d, c, g, f, a, b, g, e, d, c, g, f};
 
-  for (int i = 0; i < (sizeof(snake) / sizeof(snake[0])); i++) {
-    digitalWrite(snake[i], HIGH);
-    delay(100);
-    digitalWrite(snake[i], LOW);
-  }
+    for (int i = 0; i < (sizeof(snake) / sizeof(snake[0])); i++) {
+        digitalWrite(snake[i], HIGH);
+        delay(100);
+        digitalWrite(snake[i], LOW);
+    }
 }
 
 /* Funzione per riprodurre la nota usando tone()
@@ -65,17 +74,16 @@ void setup() {
 
 void suonaSuoneria(int* melodia, int* noteDurata, int durata, float pausa, int sizeMelodia) {
 
-  for (int thisNote = 0; thisNote < sizeMelodia; thisNote++) {
+    for (int thisNote = 0; thisNote < sizeMelodia; thisNote++) {
 
-    int noteDuration = durata / noteDurata[thisNote];
-    tone(GATE, melodia[thisNote], noteDuration);
+        int noteDuration = durata / noteDurata[thisNote];
+        tone(GATE, melodia[thisNote], noteDuration);
 
-    pauseBetweenNotes = noteDuration * pausa;
-    delay(pauseBetweenNotes);
+        pauseBetweenNotes = noteDuration * pausa;
+        delay(pauseBetweenNotes);
 
-    noTone(GATE);
-    
-  }
+        noTone(GATE);
+    }
 }
 
 /*
@@ -83,189 +91,185 @@ void suonaSuoneria(int* melodia, int* noteDurata, int durata, float pausa, int s
  */
 
 void suonaGate(int durata, int intervallo) {
-  digitalWrite(GATE, HIGH);
-  delay(durata);
-  digitalWrite(GATE, LOW);
-  delay(intervallo);
+    digitalWrite(GATE, HIGH);
+    delay(durata);
+    digitalWrite(GATE, LOW);
+    delay(intervallo);
 }
 
 void sevenSegWrite(int digit) {
-  for (byte segCount = 0; segCount < 7; ++segCount) {
-    digitalWrite(sevSeg[segCount], seven_seg_digits[digit][segCount]);
-  }
+    for (byte segCount = 0; segCount < 7; ++segCount) {
+        digitalWrite(sevSeg[segCount], seven_seg_digits[digit][segCount]);
+    }
 }
 
 void loop() {
 
-  // Gestione del numero di melodia
-  if (digitalRead(SWSX)) {
-    // Debouncer molto zozzo, ma pratico
-    while (digitalRead(SWSX)) delay(10);
-    num++;
-  }
-  // Ciclo tra le canzone disponibili
-  if (num >= numCanzoni) num = 0;
-  sevenSegWrite(num);
+    // Gestione del numero di melodia
+    if (digitalRead(SWSX)) {
+        // Debouncer molto zozzo, ma pratico
+        while (digitalRead(SWSX)) delay(10);
+        num++;
+    }
+    // Ciclo tra le canzone disponibili
+    if (num >= numCanzoni) num = 0;
+    sevenSegWrite(num);
 
-  switch (num) {
-    case 0:           // Clacson normale
+    switch (num) {
+        case 0:           // Clacson normale
 
-      while (digitalRead(SWDX)) {
-        digitalWrite(GATE, HIGH);
-      }
-      digitalWrite(GATE, LOW);
+            while (digitalRead(SWDX)) {
+                digitalWrite(GATE, HIGH);
+            }
+            digitalWrite(GATE, LOW);
 
-      break;
+            break;
 
-    case 1:         // Clacson corriera
-      if (digitalRead(SWDX)) {
-        digitalWrite(GATE, LOW);
-      }
-      break;
+        case 1:         // Clacson corriera
+            if (digitalRead(SWDX)) {
+                digitalWrite(GATE, LOW);
+            }
+            break;
 
-    case 2:         // Copa la vecia col flint
-      if (digitalRead(SWDX)) {
-        suonaGate(50, 100);
-        suonaGate(50, 50);
-        suonaGate(50, 50);
-        suonaGate(50, 100);
-        suonaGate(50, 200);
-        suonaGate(50, 100);
-        suonaGate(50, 100);
-      }
+        case 2:         // Copa la vecia col flint
+            if (digitalRead(SWDX)) {
+                suonaGate(50, 100);
+                suonaGate(50, 50);
+                suonaGate(50, 50);
+                suonaGate(50, 100);
+                suonaGate(50, 200);
+                suonaGate(50, 100);
+                suonaGate(50, 100);
+            }
 
-      break;
+            break;
 
-    case 3:         // Tetris
+        case 3:         // Tetris
 
-      if (digitalRead(SWDX)) {
-        suonaSuoneria(melody3, noteDurations3, 1000, 1.30, (sizeof(melody3) / sizeof(melody3[0])));
-      }
+            if (digitalRead(SWDX)) {
+                suonaSuoneria(melody3, noteDurations3, 1000, 1.30, (sizeof(melody3) / sizeof(melody3[0])));
+            }
 
-      digitalWrite(GATE, LOW);
+            digitalWrite(GATE, LOW);
 
-      break;
+            break;
 
-    case 4:         // Clacson Hazard
+        case 4:         // Clacson Hazard
 
-      if (digitalRead(SWDX)) {
-        suonaSuoneria(melody4, noteDurations4, 800, 1.30, (sizeof(melody4) / sizeof(melody4[0])));
-      }
+            if (digitalRead(SWDX)) {
+                suonaSuoneria(melody4, noteDurations4, 800, 1.30, (sizeof(melody4) / sizeof(melody4[0])));
+            }
 
-      digitalWrite(GATE, LOW);
+            digitalWrite(GATE, LOW);
 
-      break;
+            break;
 
-    case 5:         // Seven nation army
+        case 5:         // Seven nation army
 
-      if (digitalRead(SWDX)) {
-        suonaSuoneria(melody5, noteDurations5, 3200, 1.20, (sizeof(melody5) / sizeof(melody5[0])));
-      }
+            if (digitalRead(SWDX)) {
+                suonaSuoneria(melody5, noteDurations5, 3200, 1.20, (sizeof(melody5) / sizeof(melody5[0])));
+            }
 
-      digitalWrite(GATE, LOW);
+            digitalWrite(GATE, LOW);
 
-      break;
+            break;
 
-    case 6:         // Campioni del mondo
+        case 6:         // Campioni del mondo
 
-      if (digitalRead(SWDX)) {
-        suonaSuoneria(melody6, noteDurations6, 2400, 1.30, (sizeof(melody6) / sizeof(melody6[0])));
-      }
+            if (digitalRead(SWDX)) {
+                suonaSuoneria(melody6, noteDurations6, 2400, 1.30, (sizeof(melody6) / sizeof(melody6[0])));
+            }
 
-      digitalWrite(GATE, LOW);
+            digitalWrite(GATE, LOW);
 
-      break;
+            break;
 
-    case 7:         // Bevo Bevo
+        case 7:         // Bevo Bevo
 
-      if (digitalRead(SWDX)) {
-        suonaSuoneria(melody7, noteDurations7, 2400, 1.20, (sizeof(melody7) / sizeof(melody7[0])));
-      }
-      
-      digitalWrite(GATE, LOW);
+            if (digitalRead(SWDX)) {
+                suonaSuoneria(melody7, noteDurations7, 2400, 1.20, (sizeof(melody7) / sizeof(melody7[0])));
+            }
 
-      break;
+            digitalWrite(GATE, LOW);
 
-    case 8:         // Best Brau Theme
+            break;
 
-      if (digitalRead(SWDX)) {
+        case 8:         // Best Brau Theme
 
-        for (int bb = 0; bb < 3; bb++) {
-          suonaSuoneria(melody82, noteDurations82, 2000, 1.30, (sizeof(melody82) / sizeof(melody82[0])));
-          suonaSuoneria(melody82, noteDurations82, 2000, 1.30, (sizeof(melody82) / sizeof(melody82[0])));
-          suonaSuoneria(melody81, noteDurations81, 2000, 1.30, (sizeof(melody81) / sizeof(melody81[0])));
-        }
-      }
+            if (digitalRead(SWDX)) {
 
-      digitalWrite(GATE, LOW);
+                for (int bb = 0; bb < 3; bb++) {
+                    suonaSuoneria(melody82, noteDurations82, 2000, 1.30, (sizeof(melody82) / sizeof(melody82[0])));
+                    suonaSuoneria(melody82, noteDurations82, 2000, 1.30, (sizeof(melody82) / sizeof(melody82[0])));
+                    suonaSuoneria(melody81, noteDurations81, 2000, 1.30, (sizeof(melody81) / sizeof(melody81[0])));
+                }
+            }
 
-      break;
+            digitalWrite(GATE, LOW);
 
-    case 9:         // Best Brau Theme (Only rit)
+            break;
 
-      if (digitalRead(SWDX)) {
-        suonaSuoneria(melody9, noteDurations9, 1400, 1.30, (sizeof(melody9) / sizeof(melody9[0])));
-      }
-      digitalWrite(GATE, LOW);
+        case 9:         // Best Brau Theme (Only rit)
 
-      break;
+            if (digitalRead(SWDX)) {
+                suonaSuoneria(melody9, noteDurations9, 1400, 1.30, (sizeof(melody9) / sizeof(melody9[0])));
+            }
 
-    case 10:         // Che la sia crucca o terona
+            digitalWrite(GATE, LOW);
 
-      if (digitalRead(SWDX)) {
-          suonaSuoneria(melody10, noteDurations10, 2000, 1.00, (sizeof(melody10) / sizeof(melody10[0])));
-        }
+            break;
 
-        digitalWrite(GATE, LOW);
+        case 10:         // Che la sia crucca o terona
 
-        break;
+            if (digitalRead(SWDX)) {
+                suonaSuoneria(melody10, noteDurations10, 2000, 1.00, (sizeof(melody10) / sizeof(melody10[0])));
+            }
 
-      case 11:         // Maza la vecia ??
+            digitalWrite(GATE, LOW);
 
-        if (digitalRead(SWDX)) {
-          suonaSuoneria(melody11, noteDurations11, 1400, 1.30, (sizeof(melody11) / sizeof(melody11[0])));
-        }
+            break;
 
-        digitalWrite(GATE, LOW);
+        case 11:         // Maza la vecia ??
 
-        break;
+            if (digitalRead(SWDX)) {
+                suonaSuoneria(melody11, noteDurations11, 1400, 1.30, (sizeof(melody11) / sizeof(melody11[0])));
+            }
 
-      case 12:         // Gne gne gne gne gne gne gnee
+            digitalWrite(GATE, LOW);
 
-        if (digitalRead(SWDX)) {
+            break;
 
-          suonaSuoneria(melody12, noteDurations12, 1000, 1.30, (sizeof(melody12) / sizeof(melody12[0])));
-        }
+        case 12:         // Gne gne gne gne gne gne gnee
 
-        digitalWrite(GATE, LOW);
+            if (digitalRead(SWDX)) {
+                suonaSuoneria(melody12, noteDurations12, 1000, 1.30, (sizeof(melody12) / sizeof(melody12[0])));
+            }
 
-        break;
+            digitalWrite(GATE, LOW);
 
-      case 13:         // Rumore piu fastioso del mondo
+            break;
 
-        if (digitalRead(SWDX)) {
+        case 13:         // Rumore piu fastioso del mondo
 
-          suonaSuoneria(melody13, noteDurations13, 6000, 1.30, (sizeof(melody13) / sizeof(melody13[0])));
-        }
+            if (digitalRead(SWDX)) {
+                suonaSuoneria(melody13, noteDurations13, 6000, 1.30, (sizeof(melody13) / sizeof(melody13[0])));
+            }
 
-        digitalWrite(GATE, LOW);
+            digitalWrite(GATE, LOW);
 
-        break;
+            break;
 
-      case 14:         // Koala
+        case 14:         // Koala
 
-        if (digitalRead(SWDX)) {
+            if (digitalRead(SWDX)) {
+                for (int k = 0; k < 6; k++) {
+                    suonaSuoneria(melody14, noteDurations14, 800, 1.30, (sizeof(melody14) / sizeof(melody14[0])));
+                }
+            }
 
-          for (int k = 0; k < 6; k++) {
+            digitalWrite(GATE, LOW);
 
-            suonaSuoneria(melody14, noteDurations14, 800, 1.30, (sizeof(melody14) / sizeof(melody14[0])));
-          }
-        }
-
-        digitalWrite(GATE, LOW);
-
-        break;
-      }
-      delay(10);
-  }
+            break;
+    }
+    delay(10);
 }
