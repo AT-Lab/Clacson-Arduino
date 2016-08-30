@@ -180,40 +180,39 @@ void loop() {
 
       if (digitalRead(SWDX)) {
         suonaSuoneria(melody7, noteDurations7, 2400, 1.20, (sizeof(melody7) / sizeof(melody7[0])));
+      }
+      
+      digitalWrite(GATE, LOW);
 
+      break;
 
+    case 8:         // Best Brau Theme
 
-        digitalWrite(GATE, LOW);
+      if (digitalRead(SWDX)) {
 
-        break;
-
-      case 8:         // Best Brau Theme
-
-        if (digitalRead(SWDX)) {
-
-          for (int bb = 0; bb < 3; bb++) {
-            suonaSuoneria(melody82, noteDurations82, 2000, 1.30, (sizeof(melody82) / sizeof(melody82[0])));
-            suonaSuoneria(melody82, noteDurations82, 2000, 1.30, (sizeof(melody82) / sizeof(melody82[0])));
-            suonaSuoneria(melody81, noteDurations81, 2000, 1.30, (sizeof(melody81) / sizeof(melody81[0])));
-          }
+        for (int bb = 0; bb < 3; bb++) {
+          suonaSuoneria(melody82, noteDurations82, 2000, 1.30, (sizeof(melody82) / sizeof(melody82[0])));
+          suonaSuoneria(melody82, noteDurations82, 2000, 1.30, (sizeof(melody82) / sizeof(melody82[0])));
+          suonaSuoneria(melody81, noteDurations81, 2000, 1.30, (sizeof(melody81) / sizeof(melody81[0])));
         }
+      }
 
-        digitalWrite(GATE, LOW);
+      digitalWrite(GATE, LOW);
 
-        break;
+      break;
 
-      case 9:         // Best Brau Theme (Only rit)
+    case 9:         // Best Brau Theme (Only rit)
 
-        if (digitalRead(SWDX)) {
-          suonaSuoneria(melody9, noteDurations9, 1400, 1.30, (sizeof(melody9) / sizeof(melody9[0])));
-        }
-        digitalWrite(GATE, LOW);
+      if (digitalRead(SWDX)) {
+        suonaSuoneria(melody9, noteDurations9, 1400, 1.30, (sizeof(melody9) / sizeof(melody9[0])));
+      }
+      digitalWrite(GATE, LOW);
 
-        break;
+      break;
 
-      case 10:         // Che la sia crucca o terona
+    case 10:         // Che la sia crucca o terona
 
-        if (digitalRead(SWDX)) {
+      if (digitalRead(SWDX)) {
           suonaSuoneria(melody10, noteDurations10, 2000, 1.00, (sizeof(melody10) / sizeof(melody10[0])));
         }
 
